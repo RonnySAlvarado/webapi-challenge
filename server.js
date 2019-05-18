@@ -23,20 +23,21 @@ server.get("/api/projects/", async (req, res) => {
   }
 });
 
-// server.get("/api/projects/:id", async (req, res) => {
-//   try {
-//     const { id } = req.params;
-//     const getProjects = await projectdb.get(id);
-//     res.send(getProjects);
-//   } catch (err) {
-//     res
-//       .status(500)
-//       .json({
-//         message:
-//           "There was a problem retrieving all of the actions of the specified project."
-//       });
-//   }
-// });
+server.get("/api/projects/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const getActions = await projectdb.getProjectActions(id);
+    if (getActions) {
+      res.status(200).json(getActions);
+    } else {
+      res.status(404).json({ message: "Project ID does not exist." });
+    }
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "There was an error in processing your request." });
+  }
+});
 
 server.post("/api/projects", validateProjectInfo, async (req, res) => {
   try {
@@ -45,7 +46,7 @@ server.post("/api/projects", validateProjectInfo, async (req, res) => {
     res.status(201).json(addProject);
   } catch (err) {
     res.status(500).json({
-      message: "Something went wrong when attempting to add a new project."
+      message: "There was an error in processing your request."
     });
   }
 });
