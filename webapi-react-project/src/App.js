@@ -1,24 +1,46 @@
 import React from "react";
 import "./App.css";
 import styled from "styled-components";
+import axios from "axios";
 
-const ButtonStyle = styled.button`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 0 auto;
-  button {
-    color: white;
+const ButtonStyle = styled.h2`
+  color: black;
+  border: 1px solid black;
+  width: 200px;
+  background: lawngreen;
+  &:hover {
     background: green;
   }
 `;
 
 class App extends React.Component {
+  state = {
+    projects: []
+  };
+
+  getProjects = event => {
+    event.preventDefault();
+    axios.get("http://localhost:5000/api/projects").then(res => {
+      this.setState({ projects: res.data });
+      console.log(res.data);
+    });
+  };
+
   render() {
     return (
-      <ButtonStyle>
-        <button>Projects</button>
-      </ButtonStyle>
+      <div className="App">
+        <ButtonStyle onClick={this.getProjects}>
+          <h2>Projects</h2>
+        </ButtonStyle>
+        {this.state.projects.map(project => {
+          return (
+            <div className="projectCard">
+              <p>{project.name}</p>
+              <p>{project.description}</p>
+            </div>
+          );
+        })}
+      </div>
     );
   }
 }

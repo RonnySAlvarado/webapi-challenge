@@ -3,10 +3,12 @@ const express = require("express");
 const server = express();
 
 const logger = require("morgan");
+const helmet = require("helmet");
+const cors = require("cors");
 
 server.use(express.json());
-// server.use(cors());
-// server.use(helmet());
+server.use(cors());
+server.use(helmet());
 server.use(logger("dev"));
 
 const projectdb = require("./data/helpers/projectModel.js");
