@@ -66,16 +66,21 @@ server.delete("/api/projects/:id", async (req, res) => {
   }
 });
 
-// server.put('/api/projects/:id', validateProjectInfo, async (req, res) => {
-//     try {
-//         const { id } = req.params;
-//         const { name, description } = req.body;
-//         const updateProject = await projectdb.update(id, req.body);
-//         if (name.length > 0 && description.length > 0 && updateProject){
-//             res.status(200).json(updateProject);
-//         }
-//     }
-// })
+server.put("/api/projects/:id", validateProjectInfo, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updateProject = await projectdb.update(id, req.body);
+    if (updateProject) {
+      res.status(200).json(updateProject);
+    } else {
+      res.status(404).json({ message: "Project ID not found." });
+    }
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "There was an error in processing your request." });
+  }
+});
 
 function validateProjectInfo(req, res, next) {
   const project = req.body;
