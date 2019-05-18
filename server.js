@@ -26,6 +26,18 @@ server.get("/api/projects/", async (req, res) => {
 server.get("/api/projects/:id", async (req, res) => {
   try {
     const { id } = req.params;
+    const getProjects = await projectdb.get(id);
+    res.send(getProjects);
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "There was a problem retrieving all of the projects." });
+  }
+});
+
+server.get("/api/projects/:id/actions", async (req, res) => {
+  try {
+    const { id } = req.params;
     const getActions = await projectdb.getProjectActions(id);
     if (getActions) {
       res.status(200).json(getActions);
