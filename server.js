@@ -38,19 +38,11 @@ server.get("/api/projects/", async (req, res) => {
 //   }
 // });
 
-server.post("/api/projects", async (req, res) => {
+server.post("/api/projects", validateProjectInfo, async (req, res) => {
   try {
     const newProject = req.body;
     const addProject = await projectdb.insert(newProject);
-    const { name, description } = req.body;
-    if (name.length > 0 && description.length > 0) {
-      res.status(201).json(addProject);
-    } else {
-      res.status(400).json({
-        message:
-          "A name and description is required. Please enter a name and description."
-      });
-    }
+    res.status(201).json(addProject);
   } catch (err) {
     res.status(500).json({
       message: "Something went wrong when attempting to add a new project."
@@ -73,5 +65,29 @@ server.delete("/api/projects/:id", async (req, res) => {
       .json({ message: "There was an error in processing your request." });
   }
 });
+
+// server.put('/api/projects/:id', validateProjectInfo, async (req, res) => {
+//     try {
+//         const { id } = req.params;
+//         const { name, description } = req.body;
+//         const updateProject = await projectdb.update(id, req.body);
+//         if (name.length > 0 && description.length > 0 && updateProject){
+//             res.status(200).json(updateProject);
+//         }
+//     }
+// })
+
+function validateProjectInfo(req, res, next) {
+  const project = req.body;
+  if (project && Object.keys(project).length) {
+    if (project.name.length && project.description) {
+      next();
+    } else {
+      res
+        .status(400)
+        .json({ message: "Missing required name and description fields." });
+    }
+  }
+}
 
 module.exports = server;
